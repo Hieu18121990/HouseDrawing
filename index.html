@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Ngôi nhà hoạt hình mượt mà</title>
+<style>
+body {
+margin: 0;
+background-color: #e0f7fa;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+}
+canvas {
+border: 1px solid #ccc;
+}
+</style>
+</head>
+<body>
+<canvas id="myCanvas" width="500" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+let sunX = 500;
+let smokeParticles = [];
+
+function drawSun() {
+ctx.fillStyle = '#FFD700';
+ctx.beginPath();
+ctx.arc(sunX, 60, 30, 0, Math.PI * 2);
+ctx.fill();
+
+sunX -= 0.15; // chậm hơn, mượt hơn
+if (sunX < -30) sunX = canvas.width + 30;
+}
+
+function drawHouse() {
+ctx.fillStyle = '#FFD966';
+ctx.fillRect(100, 150, 300, 200);
+
+ctx.fillStyle = '#B45F06';
+ctx.beginPath();
+ctx.moveTo(100, 150);
+ctx.lineTo(250, 50);
+ctx.lineTo(400, 150);
+ctx.closePath();
+ctx.fill();
+
+ctx.fillStyle = '#783F04';
+ctx.fillRect(220, 250, 60, 100);
+
+ctx.fillStyle = '#9FC5E8';
+ctx.fillRect(140, 180, 50, 50);
+ctx.fillRect(310, 180, 50, 50);
+
+ctx.strokeStyle = '#000';
+ctx.beginPath();
+ctx.moveTo(140, 205); ctx.lineTo(190, 205);
+ctx.moveTo(165, 180); ctx.lineTo(165, 230);
+ctx.moveTo(310, 205); ctx.lineTo(360, 205);
+ctx.moveTo(335, 180); ctx.lineTo(335, 230);
+ctx.stroke();
+
+ctx.fillStyle = '#999999';
+ctx.fillRect(130, 80, 30, 70);
+}
+
+function drawTree() {
+ctx.fillStyle = '#8B4513';
+ctx.fillRect(40, 220, 20, 80);
+
+ctx.fillStyle = '#2E8B57';
+[ [50, 210, 30], [35, 225, 25], [65, 225, 25] ].forEach(([x, y, r]) => {
+ctx.beginPath();
+ctx.arc(x, y, r, 0, Math.PI * 2);
+ctx.fill();
+});
+}
+
+function drawSmoke() {
+if (Math.random() < 0.25) {
+smokeParticles.push({
+x: 145 + Math.random() * 10,
+y: 70,
+r: 6 + Math.random() * 6,
+opacity: 0.5 + Math.random() * 0.3,
+dx: (Math.random() - 0.5) * 0.5,
+life: 0
+});
+}
+
+smokeParticles.forEach(p => {
+ctx.fillStyle = `rgba(200, 200, 200, ${p.opacity})`;
+ctx.beginPath();
+ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+ctx.fill();
+
+// Chuyển động mượt, dao động ngang nhẹ
+p.y -= 0.3;
+p.x += Math.sin(p.life / 10) * 0.3;
+p.opacity -= 0.002;
+p.life += 1;
+});
+
+smokeParticles = smokeParticles.filter(p => p.opacity > 0);
+}
+
+function animate() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+drawSun();
+drawTree();
+drawHouse();
+drawSmoke();
+requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
+
+<!-- Liên kết đến file JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>
